@@ -1,1 +1,71 @@
-<h1>zoznam trvalych prikazov funguje!</h1>
+<div class="row my-row-bottom">
+  <div class="container">
+    <div class="row">
+      <div class="my-col-top col-12">
+        <mat-card class="trvale-prikazy-card">
+          <mat-card-header>
+            <mat-card-title> {{ oderListTitle }} </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>
+              Trvalé príkazy sú ideálne, keď potrebujete pravidelne posielať
+              platby v rovnakej výške. Tu ich môžete upravovat alebo vytvárať
+              nové
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="my-col-bottom col-12">
+        <mat-card class="tabulka-card">
+          <mat-card-header>
+            <mat-card-title>
+              <button mat-raised-button color="primary">Nový trvalý príkaz</button>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- start of a table -->
+            <div class="table-responsive">
+              <table class="table" *ngIf="products && products.length">
+                <caption>
+                  Table of standing orders
+                </caption>
+                <thead>
+                  <tr>
+                    <th id="date">Date</th>
+                    <th id="id">Id</th>
+                    <th id="amount">Suma</th>
+                    <th id="name">Nazov</th>
+                    <th id="accountNumber">IBAN</th>
+                    <th id="interval">Interval</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let product of products">
+                    <td>
+                      {{ product.NextRealizationDate }}
+                    </td>
+                    <td>
+                      {{ product.StandingOrderId }}
+                    </td>
+                    <td>
+                      {{ product.Amount }}
+                    </td>
+                    <td>
+                      {{ product.Name }}
+                    </td>
+                    <td>
+                      {{ product.AccountNumber }}
+                    </td>
+                    <td>
+                      {{ product.Interval }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
