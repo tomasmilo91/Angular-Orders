@@ -1,8 +1,14 @@
 export interface IOrder {
-  StandingOrderId: number;
-  Amount: number;
-  Name: string;
-  AccountNumber: string;
-  Interval: string;
-  NextRealizationDate: string;
+  standingOrderId: number;
+  accountId: number;
+  accountNumber: string;
+  amount: number;
+  constantSymbol: string;
+  interval: number;
+  intervalSpecification: number;
+  name: string;
+  note: string;
+  specificSymbol: number;
+  validFrom: Date;
+  variableSymbol: number;
 }

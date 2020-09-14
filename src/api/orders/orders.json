@@ -2,7 +2,7 @@
   {
     "StandingOrderId": 1,
     "Amount": 10.1,
-    "Name": "Moj prikaz 1",
+    "Name": "Moj prikaz 1 test",
     "AccountNumber": "SK8681800000007000333333",
     "Interval": "8",
     "NextRealizationDate": "March 25, 2020"

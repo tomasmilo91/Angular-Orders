@@ -19,7 +19,9 @@
         <mat-card class="tabulka-card">
           <mat-card-header>
             <mat-card-title>
-              <button mat-raised-button color="primary">Nový trvalý príkaz</button>
+              <button mat-raised-button color="primary">
+                Nový trvalý príkaz
+              </button>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -30,34 +32,19 @@
                   Table of standing orders
                 </caption>
                 <thead>
-                  <tr>
-                    <th id="date">Date</th>
-                    <th id="id">Id</th>
-                    <th id="amount">Suma</th>
-                    <th id="name">Nazov</th>
-                    <th id="accountNumber">IBAN</th>
-                    <th id="interval">Interval</th>
-                  </tr>
+                  <!-- empty thead -->
                 </thead>
                 <tbody>
                   <tr *ngFor="let product of products">
                     <td>
-                      {{ product.NextRealizationDate }}
+                      {{ product.validFrom | date: "dd.MM" }}
                     </td>
                     <td>
-                      {{ product.StandingOrderId }}
+                      <b>{{ product.name }}</b> <br />
+                      IBAN: {{ product.accountNumber }}
                     </td>
                     <td>
-                      {{ product.Amount }}
-                    </td>
-                    <td>
-                      {{ product.Name }}
-                    </td>
-                    <td>
-                      {{ product.AccountNumber }}
-                    </td>
-                    <td>
-                      {{ product.Interval }}
+                      {{ product.amount | currency: "EUR":"symbol":"1.2" }}
                     </td>
                   </tr>
                 </tbody>
