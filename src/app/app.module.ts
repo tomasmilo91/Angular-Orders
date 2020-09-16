@@ -1,4 +1,4 @@
-import { OrderListComponent } from './orders/order-list.component';
+import { OrderListComponent } from './orders/order-list/order-list.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
