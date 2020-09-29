@@ -1,35 +1,50 @@
+// bottom margin between cards
 mat-card {
   margin-bottom: 10px;
 }
 
+// buttons for editing and deleting
 .mat-stroked-button.small {
   line-height: 10px;
 }
+
+// buttons for displaying periode
+.mat-flat-button.medium {
+  line-height: 18px;
+  width: 120px;
+}
+
+//basic table define
 table {
   width: 100%;
 }
 
+//table columns for amount and date
 th.amount,
 th.date {
   width: 10%;
 }
 
+//table column for buttons
 th.tlacidla {
   width: 20%;
 }
 
-table a {
+// for hiding buttons for editing and deleting after row mouseover
+table tr td a.button {
   display: none;
 }
-table tr:hover a {
-  display: inline;
+table tr:hover td a.button {
+  display: inline-block;
 }
 
+// move button to add standing order to right
 .title-card-right {
   display: inline;
   float: right;
 }
 
+// every even table row is different color
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }

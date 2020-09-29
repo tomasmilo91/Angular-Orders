@@ -1,0 +1,237 @@
+<div mat-dialog-actions>
+  <mat-toolbar>
+    <span>Trvalý príkaz</span>
+    <span class="fill-remaining-space"></span>
+    <button class="btn-dialog-close" mat-stroked-button matDialogClose>
+      Zrušiť <mat-icon>clear</mat-icon>
+    </button>
+  </mat-toolbar>
+</div>
+<form [formGroup]="orderListService.form" class="normal-form">
+  <mat-grid-list cols="2" rowHeight="350px">
+    <mat-grid-tile>
+      <div class="controles-container">
+        <input type="hidden" formControlName="$key" />
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input formControlName="name" matInput placeholder="Príjemca" />
+            <mat-error
+              *ngIf="orderListService.form.controls['name'].errors?.required"
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="orderListService.form.controls['name'].errors?.minlength"
+              >Povinné minimálne dva znaky.</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input
+              formControlName="accountNumber"
+              matInput
+              placeholder="IBAN"
+            />
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['accountNumber'].errors?.required
+              "
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['accountNumber'].errors?.pattern
+              "
+              >Nesprávny formát IBAN.</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input
+              formControlName="amount"
+              matInput
+              placeholder="Suma"
+              input
+              type="number"
+            />
+            <mat-error
+              *ngIf="orderListService.form.controls['amount'].errors?.required"
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="orderListService.form.controls['amount'].errors?.pattern"
+            >
+              Nesprávny formát.</mat-error
+            >
+          </mat-form-field>
+        </div>
+
+        <div class="add-bottom-padding">
+          <mat-form-field class="part-width-field">
+            <input
+              formControlName="constantSymbol"
+              matInput
+              placeholder="Konštantný symbol"
+              input
+              type="number"
+            />
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['constantSymbol'].errors
+                  ?.required
+              "
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['constantSymbol'].errors?.pattern
+              "
+              >Nesprávny formát.</mat-error
+            >
+          </mat-form-field>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="small"
+            (click)="openVariables()"
+          >
+            Zoznam <br />
+            symbolov
+          </button>
+        </div>
+
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input
+              formControlName="variableSymbol"
+              matInput
+              placeholder="Variabilný symbol"
+              input
+              type="number"
+            />
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['variableSymbol'].errors
+                  ?.required
+              "
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['variableSymbol'].errors?.pattern
+              "
+              >Nesprávny formát.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="controles-container">
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input
+              formControlName="specificSymbol"
+              matInput
+              placeholder="Špecifický symbol"
+              input
+              type="number"
+            />
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['specificSymbol'].errors
+                  ?.required
+              "
+              >Toto pole je povinné.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['specificSymbol'].errors?.pattern
+              "
+              >Nesprávny formát.</mat-error
+            >
+          </mat-form-field>
+        </div>
+
+        <div class="add-bottom-padding">
+          <mat-form-field>
+            <input
+              formControlName="note"
+              matInput
+              placeholder="Poznamka pre prijemcu"
+            />
+            <mat-error></mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <mat-select formControlName="interval" placeholder="Periodicita">
+              <mat-option
+                *ngFor="let i of orderListService.interval"
+                [value]="i[0]"
+              >
+                {{ orderListService.getInterval(i[0]) }}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="
+                orderListService.form.controls['specificSymbol'].errors
+                  ?.required
+              "
+              >Toto pole je povinné.</mat-error
+            >
+          </mat-form-field>
+        </div>
+
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <mat-select
+              formControlName="intervalSpecification"
+              placeholder="Periodicita specifikacia"
+            >
+              <mat-option
+                *ngFor="
+                  let is of orderListService.intervalSpecification[
+                    orderListService.form.controls['interval'].value
+                  ]
+                "
+                [value]="is"
+                >{{ is }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="add-bottom-padding">
+          <mat-form-field class="full-width-field">
+            <input
+              formControlName="validFrom"
+              matInput
+              [matDatepicker]="picker"
+              placeholder="Začiatok účinnosti"
+              [min]="minDate"
+              [max]="maxDate"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-error></mat-error>
+        </div>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="orderListService.form.invalid"
+  >
+    Odoslať
+  </button>
+  <div class="divider"></div>
+  <button mat-raised-button color="warn" (click)="onClear()">Vymazať</button>
+</form>

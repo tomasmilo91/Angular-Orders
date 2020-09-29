@@ -1,0 +1,32 @@
+<div mat-dialog-actions>
+  <mat-toolbar>
+    <span>Zoznam konštantných symbolov</span>
+    <span class="fill-remaining-space"></span>
+    <button class="btn-dialog-close" mat-stroked-button matDialogClose>
+      Zrušiť <mat-icon>clear</mat-icon>
+    </button>
+  </mat-toolbar>
+</div>
+<div class="table-responsive">
+  <table class="table" *ngIf="constantSymbols && constantSymbols.length">
+    <thead>
+      <tr>
+        <th id="Konštantný symbol" class="constant">Konštantný symbol</th>
+        <th id="Popis konštantného symbolu" class="detail">
+          Popis konštantného symbolu
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let ks of constantSymbols">
+        <td (click)="onSubmit(ks.symbol)" class="cursor-pointer">
+          <b>{{ ks.symbol }}</b>
+        </td>
+        <td class="detail">
+          {{ ks.detail }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
