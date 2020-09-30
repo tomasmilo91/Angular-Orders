@@ -9,6 +9,7 @@
 </div>
 <div class="table-responsive">
   <table class="table" *ngIf="constantSymbols && constantSymbols.length">
+    <caption></caption>
     <thead>
       <tr>
         <th id="Konštantný symbol" class="constant">Konštantný symbol</th>
@@ -21,7 +22,7 @@
     <tbody>
       <tr *ngFor="let ks of constantSymbols">
         <td (click)="onSubmit(ks.symbol)" class="cursor-pointer">
-          <b>{{ ks.symbol }}</b>
+          <strong>{{ ks.symbol }}</strong>
         </td>
         <td class="detail">
           {{ ks.detail }}

@@ -173,7 +173,7 @@ export class OrderListService {
 
   onIntervalChanged(value: any): void {
     // cant be const
-    var intervalSpecificationForm = this.form.get('intervalSpecification');
+    let intervalSpecificationForm = this.form.get('intervalSpecification');
     // Using setValidators to add and remove validators. No better support for adding and removing validators to controller atm.
     if (value !== 1) {
       intervalSpecificationForm.enable();
