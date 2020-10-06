@@ -6,30 +6,17 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/internal/operators';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-} from '@angular/forms';
-
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
 export class OrderListService {
-  order: IOrder;
+  /* Variable for order detail */
+  orderDetail: IOrder;
   orders: IOrder[] = [];
   /* Variable for identify if add or edit order is clicked  */
   forCreate: boolean;
-
-  // interval
-  interval = [[1], [2], [3]];
-  intervalSpecification = [
-    [], [], // for interval = 1
-    [1, 2, 3, 4, 5, 6, 7], // for interval = 2
-    [1, 2, 3, 4, 5, 6, 7, 8 , 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] // for interval = 3
-  ];
 
   /* Http request headers  */
   myHttpOptions = {
@@ -40,85 +27,54 @@ export class OrderListService {
     }),
   };
 
+  /* events for communicating for total sum  */
+  private totalSumSource = new BehaviorSubject<any>(false);
+  totalSumSubject = this.totalSumSource.asObservable();
+
+  /* events for communicating for constant symbol  */
+  private constantSymbolSource = new BehaviorSubject<any>(false);
+  constantSymbolSubject = this.constantSymbolSource.asObservable();
+
+  /* events for resetting form  */
+  private resetSource = new BehaviorSubject<any>(false);
+  resetSubject = this.resetSource.asObservable();
+
+  /* events for initializating form with order  */
+  private initializeFormGroupWithOrderSource = new BehaviorSubject<any>(false);
+  initializeFormGroupWithOrderSubject = this.initializeFormGroupWithOrderSource.asObservable();
+
   constructor(private http: HttpClient) {}
 
-  /* Initialize form validations  */
-  form: FormGroup = new FormGroup({
-    $key: new FormControl(null),
-    name: new FormControl('', [Validators.required, Validators.minLength(2)]),
-    accountNumber: new FormControl('', [
-      Validators.required,
-      Validators.pattern(
-        '[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
-      ),
-    ]),
-    amount: new FormControl('', [
-      Validators.required,
-      Validators.pattern('\\-?\\d*\\.?\\d{1,2}'),
-    ]),
-    constantSymbol: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ]),
-    variableSymbol: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ]),
-    specificSymbol: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ]),
-    note: new FormControl(''),
-    interval: new FormControl(false, [Validators.required]),
-    intervalSpecification: new FormControl(['']),
-    validFrom: new FormControl(false, [Validators.required]),
-  });
-
-  /* Initialize form when dialog is loaded  */
-  initializeFormGroup(): void {
-    this.form.setValue({
-      $key: null,
-      name: '',
-      accountNumber: '',
-      amount: '',
-      constantSymbol: '',
-      variableSymbol: '',
-      specificSymbol: '',
-      note: '',
-      interval: '',
-      intervalSpecification: '',
-      validFrom: '',
-    });
+  callEmitTotalSum(value: any): void {
+    this.totalSumSource.next(value);
   }
 
-  /* Reset dialog attributes  */
-  resetAndInitialize(): void {
-    this.form.reset();
-    this.initializeFormGroup();
-    this.form.markAllAsTouched();
+  callEmitConstantSymbol(value: any): void {
+    this.constantSymbolSource.next(value);
   }
 
-  /* Initialize form with order attributes when dialog is loaded (used in editing) */
-  initializeFormGroupWithOrder(order: IOrder): void {
-    this.form.setValue({
-      $key: null,
-      name: order.name,
-      accountNumber: order.accountNumber,
-      amount: order.amount,
-      constantSymbol: order.constantSymbol,
-      variableSymbol: order.variableSymbol,
-      specificSymbol: order.specificSymbol,
-      note: order.note,
-      interval: order.interval,
-      intervalSpecification: order.intervalSpecification,
-      validFrom: order.validFrom,
-    });
+  callEmitReset(value: any): void {
+    this.resetSource.next(value);
+  }
+
+  callEmitinitializeFormGroupWithOrder(value: any): void {
+    this.initializeFormGroupWithOrderSource.next(value);
   }
 
   /* Calling GET all orders endpoint  */
   getOrders(): Observable<IOrder[]> {
     return this.http
       .get<IOrder[]>(Constants.URL_GET_ALL, this.myHttpOptions)
+      .pipe(
+        tap((data) => console.log('All: ' + JSON.stringify(data))),
+        catchError(this.handleError)
+      );
+  }
+
+  /* Calling GET order endpoint  */
+  getOrder(orderId: number): Observable<IOrder> {
+    return this.http
+      .get<IOrder>(Constants.URL_GET_ONE + orderId, this.myHttpOptions)
       .pipe(
         tap((data) => console.log('All: ' + JSON.stringify(data))),
         catchError(this.handleError)
@@ -169,39 +125,5 @@ export class OrderListService {
     }
     // Return an observable with a user-facing error message.
     return throwError('ERROR: ' + error.error);
-  }
-
-  onIntervalChanged(value: any): void {
-    // cant be const
-    let intervalSpecificationForm = this.form.get('intervalSpecification');
-    // Using setValidators to add and remove validators. No better support for adding and removing validators to controller atm.
-    if (value !== 1) {
-      intervalSpecificationForm.enable();
-      intervalSpecificationForm.clearValidators();
-      intervalSpecificationForm.setValidators([Validators.required]);
-    } else {
-      intervalSpecificationForm.clearValidators();
-      intervalSpecificationForm.disable();
-    }
-    intervalSpecificationForm.updateValueAndValidity(); // Need to call this to trigger a update
-  }
-
-  getInterval(interval: number): string {
-    let result = 'Nedefinovaný';
-    const x = interval;
-    switch (true) {
-      case x === 1:
-        result = ' Denne';
-        break;
-      case x === 2:
-        result = ' Týždenne';
-        break;
-      case x === 3:
-        result = ' Mesačne';
-        break;
-      default:
-        break;
-    }
-    return result;
   }
 }

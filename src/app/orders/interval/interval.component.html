@@ -1,0 +1,32 @@
+<div class="add-bottom-padding">
+  <mat-form-field class="full-width-field">
+    <mat-select
+      [formControl]="form.controls['interval']"
+      placeholder="Periodicita"
+    >
+      <mat-option *ngFor="let i of interval" [value]="i[0]">
+        {{ getInterval(i[0]) }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.controls['specificSymbol'].errors?.required"
+      >Toto pole je povinné.</mat-error
+    >
+  </mat-form-field>
+</div>
+
+<div class="add-bottom-padding">
+  <mat-form-field class="full-width-field">
+    <mat-select
+      [formControl]="form.controls['intervalSpecification']"
+      placeholder="Periodicita specifikacia"
+    >
+      <mat-option
+        *ngFor="
+          let is of intervalSpecification[form.controls['interval'].value]
+        "
+        [value]="is"
+        >{{ is }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+</div>

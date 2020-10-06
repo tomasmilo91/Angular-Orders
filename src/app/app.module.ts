@@ -11,7 +11,7 @@ import { WelcomeComponent } from './home/welcome.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
-
+import { IntervalComponent } from './orders/interval/interval.component';
 
 @NgModule({
   declarations: [
@@ -20,8 +20,9 @@ import { MaterialModule } from './material.module';
     OrderListComponent,
     OrderDetailComponent,
     ConfirmationComponent,
-    ConstantListComponent
-   ],
+    ConstantListComponent,
+    IntervalComponent,
+  ],
   imports: [
     BrowserModule,
     MaterialModule,
@@ -31,7 +32,7 @@ import { MaterialModule } from './material.module';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [IntervalComponent],
   bootstrap: [AppComponent],
   entryComponents: [OrderDetailComponent, ConfirmationComponent],
 })

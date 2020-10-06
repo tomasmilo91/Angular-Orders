@@ -70,7 +70,7 @@ export class ConstantListComponent {
   ) {}
 
   onSubmit(constantSymbol: number): void {
-    this.orderListService.form.controls.constantSymbol.setValue(constantSymbol);
+    this.orderListService.callEmitConstantSymbol(constantSymbol);
     this.dialogRef.close();
   }
 }

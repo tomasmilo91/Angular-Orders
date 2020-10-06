@@ -43,11 +43,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    *ngFor="let order of orderListService.orders"
-                    (mouseenter)="changeText = true"
-                    (mouseleave)="changeText = false"
-                  >
+                  <tr *ngFor="let order of orderListService.orders">
                     <td>
                       {{ order.validFrom | date: "dd.MMM" }}
                     </td>
@@ -55,32 +51,31 @@
                       {{ order.name }}
                       <br />
                       <button mat-flat-button disabled class="medium">
-                        {{ orderListService.getInterval(order.interval) }}
+                        {{ this.intervalComponent.getInterval(order.interval) }}
                       </button>
                       IBAN: {{ order.accountNumber }}
                     </td>
                     <td>
-                      <a class="button">
-                        <span *ngIf="changeText">
-                          <button
-                            mat-stroked-button
-                            color="primary"
-                            class="small"
-                            (click)="onEdit(order)"
-                          >
-                            <em class="far fa-edit"></em>
-                            Upraviť
-                          </button>
-                          <button
-                            mat-stroked-button
-                            color="primary"
-                            class="small"
-                            (click)="onDelete(order)"
-                          >
-                            <em class="fas fa-trash-alt"></em>
-                            Zmazať
-                          </button>
-                        </span>
+                      <a class="editAndDeleteButtons">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="small"
+                          (click)="onEdit(order)"
+                        >
+                          <em class="far fa-edit"></em>
+
+                          Upraviť
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="small"
+                          (click)="onDelete(order)"
+                        >
+                          <em class="fas fa-trash-alt"></em>
+                          Zmazať
+                        </button>
                       </a>
                     </td>
                     <td>
@@ -94,9 +89,7 @@
                     <th id="details" class="details">{{ getSum() }}</th>
                     <th id="tlacidla" class="tlacidla"></th>
                     <th id="amount" class="amount">
-                      {{
-                        getTotalAmount() * -1 | currency: "EUR":"symbol":"1.2"
-                      }}
+                      {{ totalSum | currency: "EUR":"symbol":"1.2" }}
                     </th>
                   </tr>
                 </tfoot>

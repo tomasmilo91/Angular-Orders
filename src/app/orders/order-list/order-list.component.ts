@@ -1,8 +1,9 @@
+import { IntervalComponent } from './../interval/interval.component';
 import { ConfirmationComponent } from './../../confirmation/confirmation.component';
 import { OrderDetailComponent } from './../order-detail/order-detail.component';
 import { OrderListService } from './order-list.service';
 import { Component, OnInit } from '@angular/core';
-import { map } from 'rxjs/internal/operators';
+import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {
   MatDialog,
@@ -18,33 +19,45 @@ import { IOrder } from 'src/app/model/order';
   styleUrls: ['./order-list.component.less'],
 })
 export class OrderListComponent implements OnInit {
-  changeText: boolean;
-
   dialogConfirmRef: MatDialogRef<ConfirmationComponent>;
+
+  totalSum: number;
 
   constructor(
     public orderListService: OrderListService,
     private router: Router,
     private dialog: MatDialog,
-    private notificationService: NotificationService
-  ) {
-    this.changeText = false;
-  }
+    private notificationService: NotificationService,
+    public intervalComponent: IntervalComponent
+  ) {}
 
   /* Get all orders after initialization  */
   ngOnInit(): void {
     console.log('In OnInit');
+    this.orderListService.totalSumSubject.subscribe(() => {
+      this.fillAndUpdateOrderTable();
+    });
+  }
+
+  fillAndUpdateOrderTable(): void {
+    console.log('updating table');
     this.orderListService
       .getOrders()
-      .pipe(map((orders) => (this.orderListService.orders = orders)))
+      .pipe(
+        tap((orders) => {
+          this.orderListService.orders = orders;
+          this.getTotalAmount();
+        })
+      )
       .subscribe();
   }
 
   /* Returns total amount of standing orders */
-  getTotalAmount(): number {
-    return this.orderListService.orders
+  getTotalAmount(): void {
+    this.totalSum = this.orderListService.orders
       .map((t) => t.amount)
       .reduce((acc, value) => acc + value, 0);
+    console.log('calculated sum:' + this.totalSum);
   }
 
   /* Returns length of standing orders arrays with respective text  */
@@ -82,18 +95,26 @@ export class OrderListComponent implements OnInit {
   /* Open dialog and initialize when add order button is pressed  */
   onCreate(): void {
     this.openDialog();
-    this.orderListService.resetAndInitialize();
+    this.orderListService.callEmitReset(true);
     this.orderListService.forCreate = true;
   }
 
   /* Open dialog and initialize when edit order button is pressed  */
   onEdit(order: IOrder): void {
     this.openDialog();
-    this.orderListService.form.reset();
-    this.orderListService.form.markAllAsTouched();
-    this.orderListService.initializeFormGroupWithOrder(order);
-    this.orderListService.forCreate = false;
-    this.orderListService.order = order;
+    // get order from database
+    this.orderListService
+      .getOrder(order.standingOrderId)
+      .pipe(
+        tap((orderFromBE) => {
+          this.orderListService.orderDetail = orderFromBE;
+          this.orderListService.callEmitinitializeFormGroupWithOrder(
+            this.orderListService.orderDetail
+          );
+          this.orderListService.forCreate = false;
+        })
+      )
+      .subscribe();
   }
 
   /* Delete order from database and table when delete order button is pressed  */
@@ -109,19 +130,21 @@ export class OrderListComponent implements OnInit {
       if (result) {
         // dialog is confirmed
         console.log('deleting order' + ord);
-        this.orderListService.deleteOrder(ord.standingOrderId).subscribe(
-          (data) => {
-            this.orderListService.orders.splice(
-              this.orderListService.orders.indexOf(ord),
-              1
-            );
-            console.log('Order deleted:' + ord);
-            this.notificationService.success(':: Úspešne zmazané');
-          },
-          (Error) => {
-            alert(Error);
-          }
-        );
+        this.orderListService
+          .deleteOrder(ord.standingOrderId)
+          .pipe(
+            tap(
+              () => {
+                console.log('Order deleted:' + ord);
+                this.notificationService.success(':: Úspešne zmazané');
+                this.fillAndUpdateOrderTable();
+              },
+              (Error) => {
+                alert(Error);
+              }
+            )
+          )
+          .subscribe();
       }
       this.dialogConfirmRef = null;
     });
